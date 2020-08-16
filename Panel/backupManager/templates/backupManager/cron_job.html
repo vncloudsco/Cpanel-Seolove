@@ -1,0 +1,330 @@
+{% extends "base.html"  %}
+{% load static %}
+{% load app_tags %}
+
+{% block content %}
+    <style>
+        a.select2-choice{
+            height: 33px !important;
+        }
+        .error-message{
+            color: #9E2424;
+        }
+        #backup_weekly_setting .iradio_square-aero{
+            margin-right: 5pt;
+        }
+    </style>
+    <div class="content">
+        <div class="box-info animated fadeInDown">
+            <div class="widget">
+                <div class="widget-header">
+                    <h2 id="test">Scheduling and Retention</h2>
+                    <div class="additional-btn">
+                    </div>
+                </div>
+                <div class="widget-content padding" >
+                    <ul id="demo2" class="nav nav-tabs">
+                        <li class="active" id="sche-tab">
+                            <a href="#scheduling" data-toggle="tab">Scheduling</a>
+                        </li>
+                        <li class="" id="reten-tab">
+                            <a href="#retention" data-toggle="tab">Retention</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-boxed">
+                        <div class="tab-pane fade active in" id="scheduling">
+                            <div class="row" >
+                                <div class="col-sm-12" id="content_blok">
+                                    {% if jobs %}
+                                        {% for form in forms %}
+                                            <form class="form-horizontal cron-form" role="form">
+                                                <div class="widget">
+                                                    <div class="widget-header" style="border-bottom:0px">
+                                                        <h2 class="title_blok">CronTab #{{ forloop.counter }}</h2>
+                                                        <div class="additional-btn">
+                                                            <button type="button" class="btn btn-primary add_cronjob" style="margin-left: 15pt">Edit</button>
+                                                            <button type="button" class="btn btn-danger delete_cronjob" >Delete</button>
+                                                            <button type="button" class="btn btn-success add_block" ><span class="glyphicon glyphicon-plus"></span></button>
+                                                            <a href="#" class="widget-toggle closed"><i class="icon-down-open-2"></i></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="widget-content" style="display: none;">
+                                                        {{form.id}}
+                                                        <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <div class="checkbox">
+                                                                    <label class="backup_daily">
+                                                                        {{ form.backup_schedu.0.tag }}
+                                                                        {{ form.backup_schedu.0.choice_label }}
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group backup_daily_setting" style="margin-left: 40pt;display: none">
+                                                                    <div class="col-sm-12">
+                                                                        {% for choice in form.backup_day %}
+                                                                            <label for="{{ choice.id_for_label  }}" class="checkbox-inline icheckbox">{{ choice.tag }}{{ choice.choice_label }}</label>
+                                                                        {% endfor %}
+                                                                        <label class="checkbox-inline icheckbox check_all_day" >
+                                                                            <input type="checkbox" id="inlineCheckbox01" value=""> Check All
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <br/>
+                                                                <div class="checkbox">
+                                                                    <label class="backup_week">
+                                                                       {{ form.backup_schedu.1.tag }}
+                                                                        {{ form.backup_schedu.1.choice_label }}
+                                                                    </label>
+                                                                </div>
+                                                                <div class="form-group backup_weekly_setting" style="margin-left: 40pt;display: none;margin-right: ">
+                                                                    <div class="col-sm-12">
+                                                                        {% for choice in form.backup_week %}
+                                                                            <label for="{{ choice.id_for_label  }}" class="checkbox-inline icheckbox">{{ choice.tag }}{{ choice.choice_label }}</label>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                                <br/>
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                        {{ form.backup_schedu.2.tag }}
+                                                                        {{ form.backup_schedu.2.choice_label }}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="error-message error-schedule" style="margin-left: 12pt;display: none;">You need to choose a data backup schedule!</div>
+                                                        <label class="control-label" style="margin-left: 15pt">Backup Type:</label>
+                                                        <div class="form-group" style="margin-left: 6pt">
+                                                            <div class="col-sm-8 backup_type">
+                                                                {% for choice in form.backup_type %}
+                                                                    <label for="{{ choice.id_for_label  }}" class="checkbox-inline icheckbox">{{ choice.tag }}{{ choice.choice_label }}</label>
+                                                                {% endfor %}
+                                                            </div>
+                                                            <br/>
+                                                        </div>
+                                                        <div class="error-message error-backup-type" style="margin-left: 12pt;display: none;">You need to choose a backup type!</div>
+                                                        <div class="form-group ssh_config" style="display: none">
+                                                            <div class="col-sm-6 " style="margin-left: 40pt;">
+                                                                <label class="control-label" style="margin-left: -15pt">Remote SSH Config:</label>
+                                                                <div class="form-group">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-9">
+                                                                            <label>{{form.host.label_tag}}</label>
+                                                                            {{form.host}}
+                                                                            {{form.host.errors}}
+                                                                        </div>
+                                                                        <div class="col-sm-3">
+                                                                            <label>{{form.port.label_tag}}</label>
+                                                                            {{form.port}}
+                                                                            {{form.port.errors}}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>{{form.user.label_tag}}</label>
+                                                                    {{form.user}}
+                                                                    {{form.user.errors}}
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>{{form.password.label_tag}}</label>
+                                                                    {{form.password}}
+                                                                    {{form.password.errors}}
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>{{form.path.label_tag}}</label>
+                                                                    {{form.path}}
+                                                                    {{form.path.errors}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        {% endfor %}
+                                    {% else %}
+                                        <form class="form-horizontal cron-form" role="form">
+                                            {% csrf_token %}
+                                            {{form.id}}
+                                            <div class="widget">
+                                                <div class="widget-header" style="border-bottom:0px">
+                                                    <h2 class="title_blok">CronTab #1</h2>
+                                                    <div class="additional-btn">
+                                                        <button type="button" class="btn btn-primary add_cronjob" style="margin-left: 15pt">Save</button>
+                                                        <button type="button" class="btn btn-danger delete_cronjob" >Delete</button>
+                                                        <button type="button" class="btn btn-success add_block" ><span class="glyphicon glyphicon-plus"></span></button>
+                                                        <a href="#" class="widget-toggle"><i class="icon-down-open-2"></i></a>
+                                                    </div>
+                                                </div>
+                                                <div class="widget-content">
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <div class="checkbox">
+                                                                <label class="backup_daily">
+                                                                    {{ form.backup_schedu.0.tag }}
+                                                                    {{ form.backup_schedu.0.choice_label }}
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-group backup_daily_setting" style="margin-left: 40pt;display: none">
+                                                                <div class="col-sm-12">
+                                                                    {% for choice in form.backup_day %}
+                                                                        <label for="{{ choice.id_for_label  }}" class="checkbox-inline icheckbox">{{ choice.tag }}{{ choice.choice_label }}</label>
+                                                                    {% endfor %}
+                                                                    <label class="checkbox-inline icheckbox check_all_day" >
+                                                                        <input type="checkbox" id="inlineCheckbox01" value=""> Check All
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="checkbox">
+                                                                <label class="backup_week">
+                                                                    {{ form.backup_schedu.1.tag }}
+                                                                    {{ form.backup_schedu.1.choice_label }}
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-group backup_weekly_setting" style="margin-left: 40pt;display: none;margin-right: ">
+                                                                <div class="col-sm-12">
+                                                                    {% for choice in form.backup_week %}
+                                                                        <label for="{{ choice.id_for_label  }}" class="checkbox-inline icheckbox">{{ choice.tag }}{{ choice.choice_label }}</label>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    {{ form.backup_schedu.2.tag }}
+                                                                    {{ form.backup_schedu.2.choice_label }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="error-message error-schedule" style="margin-left: 12pt;display: none;">You need to choose a data backup schedule!</div>
+                                                    <label class="control-label" style="margin-left: 15pt">Backup Type:</label>
+                                                    <div class="form-group" style="margin-left: 6pt">
+                                                        <div class="col-sm-8 backup_type">
+                                                            {% for choice in form.backup_type %}
+                                                                <label for="{{ choice.id_for_label  }}" class="checkbox-inline icheckbox">{{ choice.tag }}{{ choice.choice_label }}</label>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                    <div class="error-message error-backup-type" style="margin-left: 12pt;display: none;">You need to choose a backup type!</div>
+                                                    <div class="form-group ssh_config" style="display: none">
+                                                        <div class="col-sm-6 " style="margin-left: 40pt;">
+                                                            <label class="control-label" style="margin-left: -15pt">Remote SSH Config:</label>
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <div class="col-sm-9">
+                                                                        <label>{{form.host.label_tag}}</label>
+                                                                        {{form.host}}
+                                                                        {{form.host.errors}}
+                                                                    </div>
+                                                                    <div class="col-sm-3">
+                                                                        <label>{{form.port.label_tag}}</label>
+                                                                        {{form.port}}
+                                                                        {{form.port.errors}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>{{form.user.label_tag}}</label>
+                                                                {{form.user}}
+                                                                {{form.user.errors}}
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>{{form.password.label_tag}}</label>
+                                                                {{form.password}}
+                                                                {{form.password.errors}}
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>{{form.path.label_tag}}</label>
+                                                                {{form.path}}
+                                                                {{form.path.errors}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    {% endif %}
+<!--                                    {$this->Flash->render()}-->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="retention">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form class="form-horizontal retention-form" role="form">
+                                        <div class="widget">
+                                            <div class="widget-header" style="border-bottom:0px">
+                                                <h2 class="title_blok">RETENTION SETTING</h2>
+                                                <div class="additional-btn">
+
+                                                </div>
+                                            </div>
+                                            <div class="widget-content">
+                                                <div class="form-group">
+                                                    <div class="col-sm-12">
+                                                        <div class="checkbox">
+                                                            <label class="backup_daily">
+                                                                {{ form_retention.backup_schedu.0.tag }}
+                                                                {{ form_retention.backup_schedu.0.choice_label }}
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-group backup_daily_setting" style="margin-left: 40pt;display: none">
+                                                            <div class="col-sm-6">
+                                                                <label class="control-label">Retention:</label>
+                                                                {{ form_retention.backup_daily_retention }}
+                                                                <i>Daily retention must be between 1 and 9999.</i>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <div class="checkbox">
+                                                            <label class="backup_week">
+                                                                {{ form_retention.backup_schedu.1.tag }}
+                                                                {{ form_retention.backup_schedu.1.choice_label }}
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-group backup_weekly_setting" style="margin-left: 40pt;display: none;margin-right: ">
+                                                            <div class="col-sm-6">
+                                                                <label class="control-label">Retention:</label>
+                                                                {{ form_retention.backup_weekly_retention }}
+                                                                <i>Weekly retention must be between 1 and 9999.</i>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <div class="checkbox">
+                                                            <label class="backup_monthly">
+                                                                {{ form_retention.backup_schedu.2.tag }}
+                                                                {{ form_retention.backup_schedu.2.choice_label }}
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-group backup_monthly_setting" style="margin-left: 40pt;display: none">
+                                                            <div class="col-sm-6">
+                                                                <label class="control-label">Retention:</label>
+                                                                {{ form_retention.backup_monthly_retention }}
+                                                                <i>Monthly retention must be between 1 and 9999.</i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="error-message error-schedule-re" style="margin-left: 12pt;display: none;">You need to choose a data backup schedule!</div>
+                                                <div class="form-group">
+                                                    <button type="button" class="btn btn-primary add_retention" style="margin-left: 25pt">Save</button>
+                                                    <button type="button" class="btn btn-danger delete_retention">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div> <!-- / .tab-pane -->
+                    </div> <!-- / .tab-pane -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/cron_job.js' %}?{% cache_bust %}"></script>
+{% endblock %}

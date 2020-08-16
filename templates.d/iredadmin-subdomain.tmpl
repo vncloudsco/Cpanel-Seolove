@@ -1,0 +1,16 @@
+#
+# Run iRedAdmin as a sub-domain virtual host.
+#
+include /etc/nginx/templates.d/hsts.tmpl;
+
+location / {
+    root /opt/www/iredadmin;
+    uwsgi_pass 127.0.0.1:7791;
+    uwsgi_param UWSGI_CHDIR /opt/www/iredadmin;
+    uwsgi_param UWSGI_SCRIPT iredadmin;
+    include uwsgi_params;
+}
+
+location /static {
+    alias /opt/www/iredadmin/static;
+}

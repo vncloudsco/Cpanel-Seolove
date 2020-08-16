@@ -1,0 +1,10 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+*.pyc
+.idea
+*.log
+*.log.*
+GmoPanel/settings.py
+websiteManager/define.py
+venv
